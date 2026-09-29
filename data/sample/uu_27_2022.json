@@ -1,0 +1,47 @@
+[
+  {
+    "id": "UU_27_2022_PASAL_20",
+    "reg_id": "UU No. 27 Tahun 2022",
+    "reg_title": "Pelindungan Data Pribadi",
+    "status": "Berlaku",
+    "bab": "BAB IV PEMROSESAN DATA PRIBADI",
+    "pasal": "Pasal 20",
+    "legal_ref": "UU No. 27 Tahun 2022 Pasal 20",
+    "content": "Pasal 20\n(1) Pengendali Data Pribadi wajib memiliki dasar pemrosesan Data Pribadi.\n(2) Dasar pemrosesan Data Pribadi sebagaimana dimaksud pada ayat (1) meliputi:\na. persetujuan yang sah secara eksplisit dari Subjek Data Pribadi untuk 1 (satu) atau beberapa tujuan tertentu yang telah disampaikan oleh Pengendali Data Pribadi kepada Subjek Data Pribadi;\nb. pemenuhan kewajiban perjanjian dalam hal Subjek Data Pribadi merupakan salah satu pihak atau untuk memenuhi permintaan Subjek Data Pribadi pada saat akan melakukan perjanjian;\nc. pemenuhan kewajiban hukum dari Pengendali Data Pribadi sesuai dengan ketentuan peraturan perundang-undangan;\nd. pemenuhan pelindungan kepentingan vital Subjek Data Pribadi;\ne. pelaksanaan tugas dalam rangka kepentingan umum, pelayanan publik, atau pelaksanaan kewenangan Pengendali Data Pribadi berdasarkan peraturan perundang-undangan; dan/atau\nf. pemenuhan kepentingan yang sah lainnya dengan memperhatikan tujuan, kebutuhan, dan keseimbangan kepentingan Pengendali Data Pribadi dan hak Subjek Data Pribadi.",
+    "metadata": {
+      "tahun": 2022,
+      "jenis": "UU",
+      "topik": "Dasar Hukum Pemrosesan Data Pribadi"
+    }
+  },
+  {
+    "id": "UU_27_2022_PASAL_35",
+    "reg_id": "UU No. 27 Tahun 2022",
+    "reg_title": "Pelindungan Data Pribadi",
+    "status": "Berlaku",
+    "bab": "BAB IV PEMROSESAN DATA PRIBADI",
+    "pasal": "Pasal 35",
+    "legal_ref": "UU No. 27 Tahun 2022 Pasal 35",
+    "content": "Pasal 35\nPengendali Data Pribadi wajib melindungi dan memastikan keamanan Data Pribadi yang diprosesnya, dengan melakukan:\na. penyusunan dan penerapan langkah teknis operasional untuk melindungi Data Pribadi dari gangguan pemrosesan Data Pribadi yang bertentangan dengan ketentuan peraturan perundang-undangan; dan\nb. penentuan tingkat keamanan Data Pribadi dengan memperhatikan sifat dan risiko dari Data Pribadi yang harus dilindungi dalam pemrosesan Data Pribadi.",
+    "metadata": {
+      "tahun": 2022,
+      "jenis": "UU",
+      "topik": "Kewajiban Keamanan Data"
+    }
+  },
+  {
+    "id": "UU_27_2022_PASAL_57",
+    "reg_id": "UU No. 27 Tahun 2022",
+    "reg_title": "Pelindungan Data Pribadi",
+    "status": "Berlaku",
+    "bab": "BAB VIII SANKSI ADMINISTRATIF",
+    "pasal": "Pasal 57",
+    "legal_ref": "UU No. 27 Tahun 2022 Pasal 57",
+    "content": "Pasal 57\n(1) Lembaga berwenang menjatuhkan sanksi administratif atas pelanggaran ketentuan kewajiban Pengendali Data Pribadi dan Prosesor Data Pribadi.\n(2) Sanksi administratif sebagaimana dimaksud pada ayat (1) berupa:\na. peringatan tertulis;\nb. penghentian sementara kegiatan pemrosesan Data Pribadi;\nc. penghapusan atau pemusnahan Data Pribadi; dan/atau\nd. denda administratif.\n(3) Denda administratif sebagaimana dimaksud pada ayat (2) huruf d paling tinggi 2% (dua persen) dari pendapatan tahunan atau penerimaan tahunan terhadap variabel pelanggaran.",
+    "metadata": {
+      "tahun": 2022,
+      "jenis": "UU",
+      "topik": "Sanksi Administratif dan Denda PDP"
+    }
+  }
+]
