@@ -1,0 +1,138 @@
+[
+  {
+    "id": "q01_capital_requirement",
+    "query": "Berapa modal disetor minimum untuk mendirikan penyelenggara fintech lending LPBBTI menurut aturan OJK terbaru?",
+    "expected_reg": "POJK 10/POJK.05/2022",
+    "expected_pasal": "Pasal 8",
+    "expected_status": "Berlaku",
+    "category": "capital_requirement",
+    "is_out_of_scope": false,
+    "must_not_cite": ["POJK 77/POJK.01/2016"]
+  },
+  {
+    "id": "q02_max_funding_limit",
+    "query": "Berapa batas maksimum pemberian pendanaan kepada setiap penerima dana menurut aturan OJK?",
+    "expected_reg": "POJK 10/POJK.05/2022",
+    "expected_pasal": "Pasal 26",
+    "expected_status": "Berlaku",
+    "category": "lending_limit",
+    "is_out_of_scope": false
+  },
+  {
+    "id": "q03_foreign_ownership",
+    "query": "Berapa batas kepemilikan saham oleh warga negara asing atau badan hukum asing pada penyelenggara LPBBTI?",
+    "expected_reg": "POJK 10/POJK.05/2022",
+    "expected_pasal": "Pasal 11",
+    "expected_status": "Berlaku",
+    "category": "ownership",
+    "is_out_of_scope": false
+  },
+  {
+    "id": "q04_general_provisions",
+    "query": "Apa definisi dari Penyelenggara Layanan Pendanaan Bersama Berbasis Teknologi Informasi dalam POJK 10/2022?",
+    "expected_reg": "POJK 10/POJK.05/2022",
+    "expected_pasal": "Pasal 1",
+    "expected_status": "Berlaku",
+    "category": "general_provisions",
+    "is_out_of_scope": false
+  },
+  {
+    "id": "q05_risk_mitigation",
+    "query": "Bagaimana kewajiban mitigasi risiko dan pengelolaan rekening escrow bagi penyelenggara fintech lending?",
+    "expected_reg": "POJK 10/POJK.05/2022",
+    "expected_pasal": "Pasal 29",
+    "expected_status": "Berlaku",
+    "category": "risk_mitigation",
+    "is_out_of_scope": false
+  },
+  {
+    "id": "q06_sanctions_ojk",
+    "query": "Apa saja sanksi administratif yang dapat dikenakan OJK terhadap penyelenggara LPBBTI yang melanggar ketentuan?",
+    "expected_reg": "POJK 10/POJK.05/2022",
+    "expected_pasal": "Pasal 102",
+    "expected_status": "Berlaku",
+    "category": "sanctions",
+    "is_out_of_scope": false
+  },
+  {
+    "id": "q07_interest_rate_cap",
+    "query": "Berapa batas maksimum manfaat ekonomi atau suku bunga harian pinjaman online menurut SEOJK 19/2023?",
+    "expected_reg": "SEOJK 19/SEOJK.06/2023",
+    "expected_pasal": "Ketentuan II.A",
+    "expected_status": "Berlaku",
+    "category": "interest_rate",
+    "is_out_of_scope": false
+  },
+  {
+    "id": "q08_debt_collection_ethics",
+    "query": "Kapan waktu yang diperbolehkan untuk melakukan penagihan dan apa etika penagihan pinjol menurut SEOJK?",
+    "expected_reg": "SEOJK 19/SEOJK.06/2023",
+    "expected_pasal": "Ketentuan V.B",
+    "expected_status": "Berlaku",
+    "category": "debt_collection",
+    "is_out_of_scope": false
+  },
+  {
+    "id": "q09_pdp_legal_basis",
+    "query": "Apa saja dasar pemrosesan data pribadi yang sah menurut UU Pelindungan Data Pribadi?",
+    "expected_reg": "UU No. 27 Tahun 2022",
+    "expected_pasal": "Pasal 20",
+    "expected_status": "Berlaku",
+    "category": "data_protection",
+    "is_out_of_scope": false
+  },
+  {
+    "id": "q10_pdp_security_obligation",
+    "query": "Apa kewajiban pengendali data pribadi dalam menjaga kerahasiaan dan keamanan data pribadi?",
+    "expected_reg": "UU No. 27 Tahun 2022",
+    "expected_pasal": "Pasal 35",
+    "expected_status": "Berlaku",
+    "category": "data_security",
+    "is_out_of_scope": false
+  },
+  {
+    "id": "q11_pdp_sanctions",
+    "query": "Berapa denda administratif maksimal dan jenis sanksi pelanggaran UU PDP pada Pasal 57?",
+    "expected_reg": "UU No. 27 Tahun 2022",
+    "expected_pasal": "Pasal 57",
+    "expected_status": "Berlaku",
+    "category": "data_sanctions",
+    "is_out_of_scope": false
+  },
+  {
+    "id": "q12_revoked_pojk_77_capital",
+    "query": "Berapa modal disetor minimum fintech lending pada regulasi lama POJK 77/2016 yang telah dicabut?",
+    "expected_reg": "POJK 77/POJK.01/2016",
+    "expected_pasal": "Pasal 4",
+    "expected_status": "Dicabut",
+    "category": "revoked_rule",
+    "is_out_of_scope": false
+  },
+  {
+    "id": "q13_revoked_pojk_77_max_loan",
+    "query": "Berapa batas maksimal pinjaman pada ketentuan lama POJK 77/2016 yang sudah tidak berlaku?",
+    "expected_reg": "POJK 77/POJK.01/2016",
+    "expected_pasal": "Pasal 6",
+    "expected_status": "Dicabut",
+    "category": "revoked_rule",
+    "is_out_of_scope": false
+  },
+  {
+    "id": "q14_out_of_scope_recipe",
+    "query": "Bagaimana cara membuat bumbu rendang daging sapi khas Minangkabau yang empuk dan otentik?",
+    "expected_reg": "",
+    "expected_pasal": "",
+    "expected_status": "N/A",
+    "category": "out_of_scope",
+    "is_out_of_scope": true
+  },
+  {
+    "id": "q15_out_of_scope_traffic",
+    "query": "Berapa batas kecepatan maksimal kendaraan roda empat di jalan tol menurut undang-undang lalu lintas?",
+    "expected_reg": "",
+    "expected_pasal": "",
+    "expected_status": "N/A",
+    "category": "out_of_scope",
+    "is_out_of_scope": true
+  }
+]
