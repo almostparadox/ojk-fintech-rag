@@ -57,3 +57,14 @@ def test_fallback_when_no_pasal():
     assert chunks[0].pasal == "Semua"
     assert chunks[0].legal_ref == "SEOJK 19/2023 Dokumen Lengkap"
     assert "Surat Edaran OJK" in chunks[0].content
+
+def test_no_next_bab_in_pasal_content():
+    parser = LegalParser()
+    chunks = parser.parse_text(
+        text=SAMPLE_LEGAL_TEXT,
+        reg_id="POJK 10/POJK.05/2022",
+        reg_title="Layanan Pendanaan Bersama Berbasis Teknologi Informasi",
+    )
+    p1 = next(c for c in chunks if c.pasal == "Pasal 1")
+    assert "BAB III" not in p1.content
+    assert "PERIZINAN DAN KELEMBAGAAN" not in p1.content

@@ -1,5 +1,5 @@
 import re
-from typing import List, Optional
+from typing import List
 from src.config import LegalChunk
 
 class LegalParser:
@@ -31,9 +31,10 @@ class LegalParser:
         # Find all Pasal headings with positions
         pasal_matches = list(self.PASAL_PATTERN.finditer(cleaned))
 
+        clean_reg_id = re.sub(r'[^a-zA-Z0-9]', '_', reg_id)
+
         if not pasal_matches:
             # Fallback if no explicit Pasal found: single chunk
-            clean_reg_id = re.sub(r'[^a-zA-Z0-9]', '_', reg_id)
             chunks.append(LegalChunk(
                 id=f"{clean_reg_id}_ALL",
                 reg_id=reg_id,
@@ -60,10 +61,14 @@ class LegalParser:
             start_idx = pm.start()
             end_idx = pasal_matches[i + 1].start() if i + 1 < len(pasal_matches) else len(cleaned)
 
+            for bm in bab_matches:
+                if start_idx < bm.start() < end_idx:
+                    end_idx = bm.start()
+                    break
+
             pasal_body = cleaned[start_idx:end_idx].strip()
             bab_title = get_bab_for_position(start_idx)
             
-            clean_reg_id = re.sub(r'[^a-zA-Z0-9]', '_', reg_id)
             clean_pasal = re.sub(r'[^a-zA-Z0-9]', '_', pasal_title)
             chunk_id = f"{clean_reg_id}_{clean_pasal}"
 
