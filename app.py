@@ -108,7 +108,7 @@ if prompt := st.chat_input("Tanyakan aturan hukum (contoh: Berapa modal disetor 
             except Exception as e:
                 full_response = (
                     f"⚠️ Gagal menghubungi LLM: {e}\n\n"
-                    "Pastikan `LLM_API_KEY` (atau `OPENAI_API_KEY` / `NINEROUTER_API_KEY`) terkonfigurasi di `.env`."
+                    "Pastikan `LLM_API_KEY` (atau `OPENAI_API_KEY`) terkonfigurasi di `.env`."
                 )
                 response_container.markdown(full_response)
 

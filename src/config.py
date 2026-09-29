@@ -16,9 +16,7 @@ class Settings(BaseModel):
     STORAGE_DIR: Path = Field(default_factory=lambda: Path(os.getenv("STORAGE_DIR", "./storage")).resolve())
     DATA_DIR: Path = Field(default_factory=lambda: Path(__file__).parent.parent / "data")
 
-    # Backward compatibility aliases
-    NINEROUTER_API_KEY: str | None = None
-    NINEROUTER_BASE_URL: str | None = None
+    # Alias fields
     OPENAI_API_KEY: str | None = None
     OPENAI_BASE_URL: str | None = None
 
@@ -31,42 +29,28 @@ class Settings(BaseModel):
         api_key = (
             data.get("LLM_API_KEY")
             or data.get("OPENAI_API_KEY")
-            or data.get("NINEROUTER_API_KEY")
             or os.getenv("LLM_API_KEY")
             or os.getenv("OPENAI_API_KEY")
-            or os.getenv("NINEROUTER_API_KEY")
             or ""
         )
 
         base_url = (
             data.get("LLM_BASE_URL")
             or data.get("OPENAI_BASE_URL")
-            or data.get("NINEROUTER_BASE_URL")
             or os.getenv("LLM_BASE_URL")
             or os.getenv("OPENAI_BASE_URL")
-            or os.getenv("NINEROUTER_BASE_URL")
-            or (
-                "https://api.9router.com/v1"
-                if (data.get("NINEROUTER_API_KEY") or os.getenv("NINEROUTER_API_KEY"))
-                else "https://api.openai.com/v1"
-            )
+            or "https://api.openai.com/v1"
         )
 
         default_model = (
             data.get("DEFAULT_MODEL")
             or os.getenv("DEFAULT_MODEL")
-            or (
-                "deepseek-chat"
-                if (data.get("NINEROUTER_API_KEY") or os.getenv("NINEROUTER_API_KEY"))
-                else "gpt-4o-mini"
-            )
+            or "gpt-4o-mini"
         )
 
         data["LLM_API_KEY"] = api_key
         data["LLM_BASE_URL"] = base_url
         data["DEFAULT_MODEL"] = default_model
-        data["NINEROUTER_API_KEY"] = api_key
-        data["NINEROUTER_BASE_URL"] = base_url
         data["OPENAI_API_KEY"] = api_key
         data["OPENAI_BASE_URL"] = base_url
         return data

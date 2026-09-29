@@ -4,7 +4,7 @@
 
 **Goal:** Build a production-grade, structure-aware Indonesian legal RAG system for OJK/Fintech regulations and UU PDP featuring hybrid retrieval, temporal validity filtering, strict statutory citation guardrails, CLI, and Streamlit UI.
 
-**Architecture:** Custom regex state-machine parser segments Indonesian regulatory PDFs by `BAB` -> `Pasal` -> `Ayat` -> `Huruf`. Storage layer fuses LanceDB dense embeddings with BM25 sparse keyword rankings using Reciprocal Rank Fusion (RRF) and validity pre-filtering. Generation connects via 9router's OpenAI-compatible endpoint with refusal and citation guardrails.
+**Architecture:** Custom regex state-machine parser segments Indonesian regulatory PDFs by `BAB` -> `Pasal` -> `Ayat` -> `Huruf`. Storage layer fuses LanceDB dense embeddings with BM25 sparse keyword rankings using Reciprocal Rank Fusion (RRF) and validity pre-filtering. Generation connects via an OpenAI-compatible endpoint with refusal and citation guardrails.
 
 **Tech Stack:** Python 3.11+ (uv managed), LanceDB, sentence-transformers, rank-bm25, PyMuPDF/pypdf, OpenAI SDK, Streamlit, Typer/argparse, pytest.
 
@@ -110,8 +110,8 @@ pytest>=8.0.0
 
 Create `.env.example`:
 ```env
-NINEROUTER_API_KEY=your_9router_key_here
-NINEROUTER_BASE_URL=https://api.9router.com/v1
+LLM_API_KEY=your_api_key_here
+LLM_BASE_URL=https://api.openai.com/v1
 DEFAULT_MODEL=deepseek-chat
 EMBEDDING_MODEL=sentence-transformers/all-MiniLM-L6-v2
 STORAGE_DIR=./storage
@@ -160,9 +160,9 @@ git commit -m "chore: scaffold project structure and configuration"
 from src.config import Settings, LegalChunk
 
 def test_settings_default_values():
-    settings = Settings(NINEROUTER_API_KEY="test-key")
-    assert settings.NINEROUTER_API_KEY == "test-key"
-    assert settings.NINEROUTER_BASE_URL == "https://api.9router.com/v1"
+    settings = Settings(LLM_API_KEY="test-key")
+    assert settings.LLM_API_KEY == "test-key"
+    assert settings.LLM_BASE_URL == "https://api.openai.com/v1"
     assert settings.DEFAULT_MODEL == "deepseek-chat"
 
 def test_legal_chunk_model():
@@ -200,8 +200,8 @@ from dotenv import load_dotenv
 load_dotenv()
 
 class Settings(BaseModel):
-    NINEROUTER_API_KEY: str = Field(default_factory=lambda: os.getenv("NINEROUTER_API_KEY", ""))
-    NINEROUTER_BASE_URL: str = Field(default_factory=lambda: os.getenv("NINEROUTER_BASE_URL", "https://api.9router.com/v1"))
+    LLM_API_KEY: str = Field(default_factory=lambda: os.getenv("LLM_API_KEY", ""))
+    LLM_BASE_URL: str = Field(default_factory=lambda: os.getenv("LLM_BASE_URL", "https://api.openai.com/v1"))
     DEFAULT_MODEL: str = Field(default_factory=lambda: os.getenv("DEFAULT_MODEL", "deepseek-chat"))
     EMBEDDING_MODEL: str = Field(default_factory=lambda: os.getenv("EMBEDDING_MODEL", "sentence-transformers/all-MiniLM-L6-v2"))
     STORAGE_DIR: Path = Field(default_factory=lambda: Path(os.getenv("STORAGE_DIR", "./storage")).resolve())
@@ -879,7 +879,7 @@ git commit -m "feat: implement hybrid search with RRF and legal validity filteri
 
 ---
 
-### Task 8: 9router Client & Grounded Legal Prompting
+### Task 8: LLM Client & Grounded Legal Prompting
 
 **Files:**
 - Create: `src/generation/prompt.py`
@@ -975,8 +975,8 @@ from src.generation.prompt import build_system_prompt, build_user_prompt
 
 class LegalGenerator:
     def __init__(self, api_key: str = None, base_url: str = None, model: str = None):
-        self.api_key = api_key or settings.NINEROUTER_API_KEY
-        self.base_url = base_url or settings.NINEROUTER_BASE_URL
+        self.api_key = api_key or settings.LLM_API_KEY
+        self.base_url = base_url or settings.LLM_BASE_URL
         self.model = model or settings.DEFAULT_MODEL
         self._client = None
 
@@ -1027,7 +1027,7 @@ Expected: PASS
 
 ```bash
 git add src/generation/prompt.py src/generation/client.py tests/test_generation.py
-git commit -m "feat: implement 9router LLM client and legal citation prompt guardrails"
+git commit -m "feat: implement LLM client and legal citation prompt guardrails"
 ```
 
 ---
@@ -1185,7 +1185,7 @@ def cmd_query(args):
     console.print(table)
 
     if not args.no_llm:
-        console.print("\n[bold cyan]🤖 Analisis Regulasi (9router):[/bold cyan]")
+        console.print("\n[bold cyan]🤖 Analisis Regulasi (LLM):[/bold cyan]")
         generator = LegalGenerator()
         contexts = [r.chunk for r in results]
         try:
@@ -1194,8 +1194,8 @@ def cmd_query(args):
                 sys.stdout.flush()
             print()
         except Exception as e:
-            console.print(f"[red]Gagal memanggil 9router LLM: {e}[/red]")
-            console.print("[yellow]Tip: Pastikan NINEROUTER_API_KEY sudah diisi di .env[/yellow]")
+            console.print(f"[red]Gagal memanggil LLM: {e}[/red]")
+            console.print("[yellow]Tip: Pastikan LLM_API_KEY sudah diisi di .env[/yellow]")
 
 def cmd_ingest(args):
     file_path = Path(args.file)
@@ -1387,7 +1387,7 @@ if prompt := st.chat_input("Tanyakan aturan hukum (contoh: Berapa modal disetor 
                     response_container.markdown(full_response + "▌")
                 response_container.markdown(full_response)
             except Exception as e:
-                full_response = f"⚠️ Gagal menghubungi LLM: {e}\n\nPastikan `NINEROUTER_API_KEY` terkonfigurasi di `.env`."
+                full_response = f"⚠️ Gagal menghubungi LLM: {e}\n\nPastikan `LLM_API_KEY` terkonfigurasi di `.env`."
                 response_container.markdown(full_response)
 
             st.session_state.messages.append({
@@ -1425,7 +1425,7 @@ Complete documentation including:
 - 3-minute quickstart for friends:
   1. `git clone ...`
   2. `uv sync` (or `pip install -r requirements.txt`)
-  3. `cp .env.example .env` (add 9router key)
+  3. `cp .env.example .env` (add LLM API key)
   4. `python cli.py bootstrap`
   5. `streamlit run app.py`
 - Benchmark evaluation table.

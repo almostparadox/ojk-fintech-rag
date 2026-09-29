@@ -75,7 +75,7 @@ def cmd_query(args):
         except Exception as e:
             console.print(f"[red]Gagal memanggil LLM: {e}[/red]")
             console.print(
-                "[yellow]Tip: Pastikan LLM_API_KEY (atau OPENAI_API_KEY / NINEROUTER_API_KEY) sudah diisi di .env[/yellow]"
+                "[yellow]Tip: Pastikan LLM_API_KEY (atau OPENAI_API_KEY) sudah diisi di .env[/yellow]"
             )
 
 

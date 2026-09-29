@@ -28,7 +28,7 @@ Standard RAG implementations (chunking by 500 characters + vector similarity) pe
 - **Embeddings:** HuggingFace `sentence-transformers` (`BAAI/bge-m3` or `intfloat/multilingual-e5-small`) running locally on CPU.
 - **Sparse Index:** BM25 (`rank-bm25`) for exact keyword and article identifier matching.
 - **Fusion:** Reciprocal Rank Fusion (RRF) with configurable weights.
-- **LLM Provider:** 9router OpenAI-compatible API (`base_url` + `api_key`).
+- **LLM Provider:** OpenAI-compatible API (`base_url` + `api_key`).
 - **User Interfaces:**
   - Streamlit web interface (`app.py`) for browser inspection and demonstration.
   - Command Line Interface (`cli.py`) for automated queries and ingestion scripting.
@@ -66,7 +66,7 @@ ojk-fintech-rag/
 │   │   └── status_filter.py  # Filter or badge regulations by validity status
 │   ├── generation/
 │   │   ├── __init__.py
-│   │   ├── client.py         # 9router OpenAI client wrapper
+│   │   ├── client.py         # OpenAI-compatible LLM client wrapper
 │   │   └── prompt.py         # Grounded legal citation prompts
 │   └── evaluation/
 │       ├── __init__.py
@@ -119,8 +119,8 @@ ojk-fintech-rag/
 
 ### 4.3 Generation & Citation Guardrails (`client.py`, `prompt.py`)
 - Client uses `openai.OpenAI` configured with:
-  - `base_url = os.getenv("NINEROUTER_BASE_URL", "https://api.9router.com/v1")`
-  - `api_key = os.getenv("NINEROUTER_API_KEY")`
+  - `base_url = os.getenv("LLM_BASE_URL", "https://api.openai.com/v1")`
+  - `api_key = os.getenv("LLM_API_KEY")`
   - Default model: `gpt-4o-mini` or `deepseek-chat` configurable in `.env`.
 - System prompt rules:
   1. Act as Indonesian FinTech Regulatory Intelligence Assistant.
@@ -161,7 +161,7 @@ To ensure any colleague or recruiter can clone and run in under 3 minutes:
    - SEOJK 19/SEOJK.06/2023 (Penyelenggaraan LPBBTI)
    - UU 27/2022 (Pelindungan Data Pribadi)
 2. Include pre-built CLI command `python cli.py bootstrap` to index sample data without requiring manual PDF extraction.
-3. Only requires `.env` with `NINEROUTER_API_KEY`.
+3. Only requires `.env` with `LLM_API_KEY`.
 
 ---
 

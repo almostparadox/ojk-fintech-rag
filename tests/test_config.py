@@ -2,21 +2,22 @@ from src.config import LegalChunk, Settings
 
 
 def test_settings_default_values():
-    settings = Settings(NINEROUTER_API_KEY="test-key")
-    assert settings.NINEROUTER_API_KEY == "test-key"
-    assert settings.NINEROUTER_BASE_URL == "https://api.9router.com/v1"
-    assert settings.DEFAULT_MODEL == "deepseek-chat"
+    settings = Settings(OPENAI_API_KEY="test-key")
+    assert settings.LLM_API_KEY == "test-key"
+    assert settings.OPENAI_API_KEY == "test-key"
+    assert settings.LLM_BASE_URL == "https://api.openai.com/v1"
+    assert settings.DEFAULT_MODEL == "gpt-4o-mini"
 
 
 def test_settings_generic_llm_values():
     settings = Settings(
         LLM_API_KEY="generic-key",
         LLM_BASE_URL="https://api.deepseek.com/v1",
-        DEFAULT_MODEL="deepseek-reasoner",
+        DEFAULT_MODEL="deepseek-chat",
     )
     assert settings.LLM_API_KEY == "generic-key"
     assert settings.LLM_BASE_URL == "https://api.deepseek.com/v1"
-    assert settings.DEFAULT_MODEL == "deepseek-reasoner"
+    assert settings.DEFAULT_MODEL == "deepseek-chat"
     assert settings.OPENAI_API_KEY == "generic-key"
 
 

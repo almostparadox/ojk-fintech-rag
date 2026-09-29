@@ -8,7 +8,7 @@
 
 Production-grade, structure-aware Indonesian Legal Retrieval-Augmented Generation (RAG) system specialized for **Otoritas Jasa Keuangan (OJK)** fintech regulations and **UU No. 27/2022 Pelindungan Data Pribadi (PDP)**.
 
-Built with **hierarchical legal parsing**, **hybrid search (LanceDB + BM25) with Reciprocal Rank Fusion (RRF)**, **temporal validity filtering (*Berlaku* vs *Dicabut*)**, and **strict statutory citation guardrails** powered by 9router.
+Built with **hierarchical legal parsing**, **hybrid search (LanceDB + BM25) with Reciprocal Rank Fusion (RRF)**, **temporal validity filtering (*Berlaku* vs *Dicabut*)**, and **strict statutory citation guardrails** powered by any OpenAI-compatible LLM.
 
 ---
 
@@ -64,7 +64,7 @@ Standard "Chat with PDF" implementations (chunking every 500 characters + cosine
                                ▼ Top-N Ranked Legal Contexts
 ┌─────────────────────────────────────────────────────────────┐
 │          Statutory Guardrail Generation Engine              │
-│  - 9router OpenAI-compatible API (DeepSeek / GPT-4o-mini)   │
+│  - OpenAI-compatible API (DeepSeek / GPT-4o-mini / Ollama)  │
 │  - Strict system prompt: verbatim citations & zero hallucination │
 └─────────────────────────────────────────────────────────────┘
                                │
@@ -99,7 +99,7 @@ pip install -r requirements.txt
 
 ### 2. Configure Environment
 
-Copy the `.env.example` file and configure your LLM provider (OpenAI, DeepSeek, 9router, OpenRouter, Groq, or local Ollama):
+Copy the `.env.example` file and configure your LLM provider (OpenAI, DeepSeek, OpenRouter, Groq, or local Ollama):
 
 ```bash
 cp .env.example .env
@@ -112,9 +112,9 @@ LLM_API_KEY=your_api_key_here
 LLM_BASE_URL=https://api.openai.com/v1
 DEFAULT_MODEL=gpt-4o-mini
 
-# Or for 9router:
-# LLM_API_KEY=your_9router_key_here
-# LLM_BASE_URL=https://api.9router.com/v1
+# Or for DeepSeek:
+# LLM_API_KEY=your_deepseek_key_here
+# LLM_BASE_URL=https://api.deepseek.com/v1
 # DEFAULT_MODEL=deepseek-chat
 
 # Or for local Ollama:
@@ -178,7 +178,7 @@ Sample output:
 │ 1    │ POJK 10/POJK.05/2022 │ Pasal 8 │ Berlaku  │ 0.0328    │
 └──────┴──────────────────────┴─────────┴──────────┴───────────┘
 
-🤖 Analisis Regulasi (9router):
+🤖 Analisis Regulasi (LLM):
 Berdasarkan [POJK 10/POJK.05/2022, Pasal 8 ayat (1)] [STATUS: BERLAKU], penyelenggara fintech lending (LPBBTI) harus memiliki modal disetor pada saat pendirian paling sedikit Rp25.000.000.000,00 (dua puluh lima miliar rupiah) dan disetor secara tunai.
 ```
 
@@ -277,7 +277,7 @@ ojk-fintech-rag/
 │   │   └── hybrid_search.py       # BM25 + LanceDB RRF hybrid searcher
 │   ├── generation/
 │   │   ├── prompt.py              # Strict citation prompts & guardrails
-│   │   └── client.py              # 9router OpenAI-compatible client
+│   │   └── client.py              # OpenAI-compatible LLM client wrapper
 │   └── evaluation/
 │       ├── golden_dataset.json    # 15 curated legal test triplets
 │       └── benchmark.py           # Evaluation runner & metric calculator
@@ -304,7 +304,7 @@ All 30+ tests verify:
 - BM25Okapi scoring and exact article identifier recall.
 - Reciprocal Rank Fusion arithmetic and rank merge logic.
 - Temporal status filtering (`Berlaku` vs `Dicabut`).
-- 9router client request construction and streaming chunk parsing.
+- LLM client request construction and streaming chunk parsing.
 - Evaluation harness calculations against golden datasets.
 - CLI subcommands and Streamlit app syntax integrity.
 
