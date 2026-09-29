@@ -77,3 +77,15 @@ def test_stream_response_mocked():
     chunks = []
     tokens = list(gen.stream_response("test query", chunks))
     assert "".join(tokens) == "Modal Rp25 miliar."
+
+def test_stream_response_empty_choices():
+    gen = LegalGenerator(api_key="mock_key")
+    mock_client = MagicMock()
+    mock_chunk_empty = MagicMock()
+    mock_chunk_empty.choices = []
+    mock_chunk_valid = MagicMock()
+    mock_chunk_valid.choices = [MagicMock(delta=MagicMock(content="OK"))]
+    mock_client.chat.completions.create.return_value = [mock_chunk_empty, mock_chunk_valid]
+    gen._client = mock_client
+    tokens = list(gen.stream_response("test", []))
+    assert tokens == ["OK"]

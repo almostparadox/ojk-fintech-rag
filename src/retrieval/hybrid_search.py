@@ -5,7 +5,6 @@ from pydantic import BaseModel
 import lancedb
 from sentence_transformers import SentenceTransformer
 from src.config import LegalChunk, settings
-from src.retrieval.status_filter import filter_by_status
 
 class SearchResult(BaseModel):
     chunk: LegalChunk
@@ -19,6 +18,7 @@ class HybridSearcher:
         self._embedder = None
         self._lance_db = None
         self._bm25_data = None
+        self._cached_chunks: Optional[List[LegalChunk]] = None
 
     @property
     def embedder(self) -> SentenceTransformer:
@@ -40,10 +40,20 @@ class HybridSearcher:
                 raise FileNotFoundError(f"BM25 index not found at {bm25_path}. Run indexer first.")
             with open(bm25_path, "rb") as f:
                 self._bm25_data = pickle.load(f)
+            self._cached_chunks = None
         return self._bm25_data
 
+    @property
+    def chunks(self) -> List[LegalChunk]:
+        if self._cached_chunks is None:
+            self._cached_chunks = [LegalChunk(**c) for c in self.bm25_data.get("chunks", [])]
+        return self._cached_chunks
+
     def search(self, query: str, top_k: int = 5, active_only: bool = True) -> List[SearchResult]:
-        all_chunks = [LegalChunk(**c) for c in self.bm25_data.get("chunks", [])]
+        if top_k <= 0:
+            return []
+
+        all_chunks = self.chunks
         if not all_chunks:
             return []
 

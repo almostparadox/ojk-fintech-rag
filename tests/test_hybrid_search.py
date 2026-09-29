@@ -83,3 +83,27 @@ def test_hybrid_search_missing_index(tmp_path):
     searcher = HybridSearcher(storage_dir=storage_dir)
     with pytest.raises(FileNotFoundError):
         searcher.search("test")
+
+def test_hybrid_search_zero_top_k(tmp_path):
+    storage_dir = tmp_path / "storage"
+    indexer = LegalIndexer(storage_dir=storage_dir)
+    chunks = [
+        LegalChunk(
+            id="POJK_10_2022_PASAL_8",
+            reg_id="POJK 10/POJK.05/2022",
+            reg_title="LPBBTI",
+            status="Berlaku",
+            bab="BAB III",
+            pasal="Pasal 8",
+            legal_ref="POJK 10/POJK.05/2022 Pasal 8",
+            content="Penyelenggara harus memiliki modal disetor paling sedikit Rp25.000.000.000,00."
+        )
+    ]
+    indexer.index_chunks(chunks)
+    searcher = HybridSearcher(storage_dir=storage_dir)
+    assert searcher.search("modal", top_k=0) == []
+    assert searcher.search("modal", top_k=-1) == []
+    # Verify chunks caching
+    assert searcher.chunks is not None
+    assert searcher.chunks is searcher.chunks
+

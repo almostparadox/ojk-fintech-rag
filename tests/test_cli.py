@@ -61,6 +61,18 @@ def test_cli_ingest(tmp_path, monkeypatch):
     cli.cmd_ingest(ArgsIngest())
     assert (storage_dir / "bm25.pkl").exists()
 
+def test_cli_ingest_missing_file(tmp_path, monkeypatch, capsys):
+    import cli
+    from src.config import settings
+
+    class ArgsIngestMissing:
+        file = str(tmp_path / "does_not_exist.pdf")
+        reg_id = "POJK 99/2026"
+        reg_title = "Fintech Sandbox"
+        status = "Berlaku"
+
+    cli.cmd_ingest(ArgsIngestMissing())
+
 def test_cli_eval(tmp_path, monkeypatch):
     import cli
     from src.config import settings

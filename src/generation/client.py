@@ -49,6 +49,7 @@ class LegalGenerator:
             stream=True
         )
         for chunk in stream:
-            delta = chunk.choices[0].delta.content
-            if delta:
-                yield delta
+            if chunk.choices and chunk.choices[0].delta:
+                delta = chunk.choices[0].delta.content
+                if delta:
+                    yield delta

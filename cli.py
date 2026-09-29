@@ -73,7 +73,15 @@ def cmd_query(args):
 
 def cmd_ingest(args):
     file_path = Path(args.file)
-    text = load_document(file_path)
+    try:
+        text = load_document(file_path)
+    except FileNotFoundError:
+        console.print(f"[bold red]❌ Error:[/bold red] File tidak ditemukan di [yellow]{file_path}[/yellow]")
+        return
+    except Exception as e:
+        console.print(f"[bold red]❌ Gagal memuat file:[/bold red] {e}")
+        return
+
     parser = LegalParser()
     chunks = parser.parse_text(
         text=text,

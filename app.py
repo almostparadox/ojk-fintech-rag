@@ -59,8 +59,18 @@ if prompt := st.chat_input("Tanyakan aturan hukum (contoh: Berapa modal disetor 
         st.markdown(prompt)
 
     with st.chat_message("assistant"):
-        searcher = HybridSearcher()
-        results = searcher.search(prompt, top_k=top_k, active_only=active_only)
+        try:
+            searcher = HybridSearcher()
+            results = searcher.search(prompt, top_k=top_k, active_only=active_only)
+        except FileNotFoundError:
+            warning_msg = (
+                "⚠️ Basis data regulasi belum diindeks! "
+                "Silakan klik tombol **'🔄 Reload / Re-index Sample Data'** di sidebar kiri, "
+                "atau jalankan `python cli.py bootstrap` di terminal terlebih dahulu."
+            )
+            st.warning(warning_msg)
+            st.session_state.messages.append({"role": "assistant", "content": warning_msg})
+            st.stop()
 
         if not results:
             ans = "Berdasarkan peraturan yang tersedia dalam basis data, dasar hukum untuk pertanyaan ini tidak ditemukan."
