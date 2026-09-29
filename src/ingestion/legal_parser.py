@@ -4,7 +4,7 @@ from src.config import LegalChunk
 
 class LegalParser:
     BAB_PATTERN = re.compile(r'^(BAB\s+[IVXLCDM]+(?:\n(?![P|p]asal)[^\n]+|[^\n]+)?)', re.MULTILINE | re.IGNORECASE)
-    PASAL_PATTERN = re.compile(r'^(Pasal\s+\d+)', re.MULTILINE | re.IGNORECASE)
+    PASAL_PATTERN = re.compile(r'^(Pasal\s+\d+[A-Za-z]?)', re.MULTILINE | re.IGNORECASE)
 
     def clean_text(self, text: str) -> str:
         # Strip running page artifacts and administrative footnotes

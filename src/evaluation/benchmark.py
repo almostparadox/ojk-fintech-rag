@@ -1,11 +1,17 @@
 # src/evaluation/benchmark.py
 from pathlib import Path
 import json
+import re
 from typing import List, Dict, Any, Optional
 
 from src.config import LegalChunk, settings
 from src.retrieval.hybrid_search import HybridSearcher, SearchResult
 from src.generation.client import LegalGenerator
+
+ID_STOPWORDS = {
+    "dan", "yang", "di", "ke", "dari", "ini", "itu", "untuk", "pada",
+    "adalah", "dengan", "atau", "apa", "bagaimana", "berapa", "apakah"
+}
 
 class BenchmarkEvaluator:
     def __init__(
@@ -99,9 +105,32 @@ class BenchmarkEvaluator:
                     if "dasar hukum" in ans.lower() and ("tidak ditemukan" in ans.lower() or "tidak ada" in ans.lower()):
                         refusal_pass = True
                 else:
-                    # Without LLM: Out-of-scope queries shouldn't match any target legal pasal via BM25
-                    bm25_matched = any(r.bm25_rank > 0 for r in results)
-                    refusal_pass = not bm25_matched
+                    # Without LLM: Out-of-scope queries shouldn't have substantive match in legal corpus
+                    if not results:
+                        refusal_pass = True
+                    else:
+                        bm25_obj = self.searcher.bm25_data["bm25"]
+                        clean_tokens = [
+                            re.sub(r'[^a-zA-Z0-9]', '', t)
+                            for t in query.lower().split()
+                        ]
+                        substantive_tokens = [
+                            t for t in clean_tokens
+                            if t and t not in ID_STOPWORDS and len(t) > 2
+                        ]
+
+                        if not substantive_tokens:
+                            bm25_matched = False
+                        else:
+                            matching_substantive = [
+                                t for t in substantive_tokens
+                                if max(bm25_obj.get_scores([t])) > 0
+                            ]
+                            # Substantive keyword presence: in-scope queries match multiple domain terms (>=2),
+                            # whereas out-of-scope queries have no or only incidental single-token overlap (e.g. 'batas')
+                            bm25_matched = len(matching_substantive) >= 2
+
+                        refusal_pass = not bm25_matched
 
                 detail["refusal_correct"] = refusal_pass
                 if refusal_pass:

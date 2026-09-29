@@ -91,7 +91,7 @@ def cmd_ingest(args):
     )
     console.print(f"Parsed [cyan]{len(chunks)}[/cyan] pasal from [bold]{file_path.name}[/bold]")
     indexer = LegalIndexer()
-    indexer.index_chunks(chunks)
+    indexer.index_chunks(chunks, append=True)
     console.print(f"[bold green]✓ Berhasil mengindeks {file_path.name}![/bold green]")
 
 def cmd_eval(args):

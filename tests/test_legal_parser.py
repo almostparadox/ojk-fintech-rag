@@ -68,3 +68,29 @@ def test_no_next_bab_in_pasal_content():
     p1 = next(c for c in chunks if c.pasal == "Pasal 1")
     assert "BAB III" not in p1.content
     assert "PERIZINAN DAN KELEMBAGAAN" not in p1.content
+
+def test_parse_pasal_amendment_numbering():
+    amendment_text = """
+BAB I
+Pasal 8
+Ketentuan modal disetor dasar.
+
+Pasal 8A
+Penyelenggara yang telah memperoleh izin usaha wajib menyesuaikan modal disetor.
+
+Pasal 9
+Ketentuan penutup.
+"""
+    parser = LegalParser()
+    chunks = parser.parse_text(
+        text=amendment_text,
+        reg_id="POJK 10/POJK.05/2022",
+        reg_title="LPBBTI",
+    )
+    assert len(chunks) == 3
+    pasal_names = [c.pasal for c in chunks]
+    assert "Pasal 8A" in pasal_names
+    p8a = next(c for c in chunks if c.pasal == "Pasal 8A")
+    assert "menyesuaikan modal disetor" in p8a.content
+    assert p8a.id == "POJK_10_POJK_05_2022_Pasal_8A"
+

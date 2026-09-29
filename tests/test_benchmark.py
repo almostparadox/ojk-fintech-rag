@@ -120,3 +120,27 @@ def test_benchmark_with_mock_generator(tmp_path):
     assert results["refusal_accuracy"] == 1.0
     report = evaluator.format_report(results)
     assert "Citation Precision" in report
+
+def test_non_llm_refusal_filtering_stopwords(tmp_path):
+    storage_dir = tmp_path / "storage_non_llm"
+    indexer = LegalIndexer(storage_dir=storage_dir)
+    chunks = [
+        LegalChunk(
+            id="POJK_10_2022_PASAL_8",
+            reg_id="POJK 10/POJK.05/2022",
+            reg_title="LPBBTI",
+            status="Berlaku",
+            bab="BAB III",
+            pasal="Pasal 8",
+            legal_ref="POJK 10/POJK.05/2022 Pasal 8",
+            content="Modal disetor minimal Rp25 miliar dan disetor secara tunai pada bank di Indonesia."
+        )
+    ]
+    indexer.index_chunks(chunks)
+
+    evaluator = BenchmarkEvaluator(storage_dir=storage_dir)
+    results = evaluator.evaluate(with_llm=False)
+    # The out-of-scope questions (recipe & traffic) should pass refusal even without LLM
+    assert results["refusal_accuracy"] == 1.0
+    assert results["refusal_checks_passed"] == results["out_of_scope_queries"]
+

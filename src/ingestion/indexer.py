@@ -27,28 +27,45 @@ class LegalIndexer:
             self._lance_db = lancedb.connect(str(lance_path))
         return self._lance_db
 
-    def index_chunks(self, chunks: List[LegalChunk]) -> None:
+    def index_chunks(self, chunks: List[LegalChunk], append: bool = False) -> None:
         if not chunks:
             return
 
+        combined_chunks = chunks
+        if append:
+            bm25_path = self.storage_dir / "bm25.pkl"
+            if bm25_path.exists():
+                try:
+                    with open(bm25_path, "rb") as f:
+                        existing_data = pickle.load(f)
+                    existing_raw = existing_data.get("chunks", [])
+                    chunk_map: Dict[str, LegalChunk] = {
+                        c["id"]: LegalChunk(**c) for c in existing_raw
+                    }
+                    for c in chunks:
+                        chunk_map[c.id] = c
+                    combined_chunks = list(chunk_map.values())
+                except Exception:
+                    combined_chunks = chunks
+
         # 1. BM25 Tokenization & Indexing
         tokenized_corpus = [
-            c.to_search_text().lower().split() for c in chunks
+            c.to_search_text().lower().split() for c in combined_chunks
         ]
         bm25 = BM25Okapi(tokenized_corpus)
         bm25_data = {
             "bm25": bm25,
-            "chunks": [c.model_dump() for c in chunks]
+            "chunks": [c.model_dump() for c in combined_chunks]
         }
         with open(self.storage_dir / "bm25.pkl", "wb") as f:
             pickle.dump(bm25_data, f)
 
         # 2. Vector Embedding & LanceDB Indexing
-        texts = [c.to_search_text() for c in chunks]
+        texts = [c.to_search_text() for c in combined_chunks]
         embeddings = self.embedder.encode(texts, show_progress_bar=False).tolist()
 
         data = []
-        for c, emb in zip(chunks, embeddings):
+        for c, emb in zip(combined_chunks, embeddings):
             row = c.model_dump()
             row["vector"] = emb
             data.append(row)

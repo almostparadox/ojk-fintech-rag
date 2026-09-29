@@ -71,7 +71,7 @@ class HybridSearcher:
 
         # 2. Vector Search
         query_vec = self.embedder.encode(query, show_progress_bar=False).tolist()
-        vector_results = self.lance_table.search(query_vec).limit(top_k * 3).to_list()
+        vector_results = self.lance_table.search(query_vec).limit(max(20, top_k * 5)).to_list()
         vector_rank_map: Dict[str, int] = {}
         chunk_dict: Dict[str, LegalChunk] = {c.id: c for c in all_chunks}
         for rank, row in enumerate(vector_results):
