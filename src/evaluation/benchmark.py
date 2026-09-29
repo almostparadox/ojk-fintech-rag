@@ -99,14 +99,9 @@ class BenchmarkEvaluator:
                     if "dasar hukum" in ans.lower() and ("tidak ditemukan" in ans.lower() or "tidak ada" in ans.lower()):
                         refusal_pass = True
                 else:
-                    # Without LLM: Out-of-scope queries shouldn't match any target legal pasal
-                    # BM25 rank would be -1 or no match
+                    # Without LLM: Out-of-scope queries shouldn't match any target legal pasal via BM25
                     bm25_matched = any(r.bm25_rank > 0 for r in results)
-                    if not bm25_matched or len(results) == 0:
-                        refusal_pass = True
-                    else:
-                        # Vector retrieval might retrieve distant chunks, but no exact keyword matches
-                        refusal_pass = True
+                    refusal_pass = not bm25_matched
 
                 detail["refusal_correct"] = refusal_pass
                 if refusal_pass:
@@ -124,7 +119,11 @@ class BenchmarkEvaluator:
                     active_results = self.searcher.search(query, top_k=self.top_k, active_only=True)
                     
                     found_in_revoked = any(
-                        expected_pasal.lower() in r.chunk.pasal.lower()
+                        (expected_pasal.lower() in r.chunk.pasal.lower() or
+                         expected_pasal.lower() in r.chunk.legal_ref.lower()) and
+                        (not expected_reg or
+                         expected_reg.lower() in r.chunk.reg_id.lower() or
+                         expected_reg.lower() in r.chunk.legal_ref.lower())
                         for r in revoked_results
                     )
                     not_in_active = not any(
@@ -151,7 +150,10 @@ class BenchmarkEvaluator:
                     # 1. Recall check
                     recall_hit = any(
                         (expected_pasal.lower() in r.chunk.pasal.lower() or
-                         expected_pasal.lower() in r.chunk.legal_ref.lower())
+                         expected_pasal.lower() in r.chunk.legal_ref.lower()) and
+                        (not expected_reg or
+                         expected_reg.lower() in r.chunk.reg_id.lower() or
+                         expected_reg.lower() in r.chunk.legal_ref.lower())
                         for r in results
                     )
                     detail["recall_hit"] = recall_hit
@@ -176,6 +178,7 @@ class BenchmarkEvaluator:
                         detail["llm_answer"] = ans
                         cite_pass = (
                             expected_pasal.lower() in ans.lower() and
+                            (not expected_reg or expected_reg.lower() in ans.lower()) and
                             not any(forbidden.lower() in ans.lower() for forbidden in must_not_cite)
                         )
                         detail["citation_correct"] = cite_pass

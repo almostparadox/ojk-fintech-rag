@@ -46,12 +46,12 @@
     "is_out_of_scope": false
   },
   {
-    "id": "q06_sanctions_ojk",
-    "query": "Apa saja sanksi administratif yang dapat dikenakan OJK terhadap penyelenggara LPBBTI yang melanggar ketentuan?",
+    "id": "q06_revocation_clause_ojk",
+    "query": "Pasal berapa dalam POJK 10/2022 yang menyatakan bahwa POJK 77/2016 dicabut dan dinyatakan tidak berlaku?",
     "expected_reg": "POJK 10/POJK.05/2022",
     "expected_pasal": "Pasal 102",
     "expected_status": "Berlaku",
-    "category": "sanctions",
+    "category": "revocation_clause",
     "is_out_of_scope": false
   },
   {

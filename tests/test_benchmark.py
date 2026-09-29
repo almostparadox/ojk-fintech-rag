@@ -64,6 +64,7 @@ def test_benchmark_evaluator_scoring(tmp_path):
     assert "refusal_accuracy" in results
     assert results["total_queries"] >= 15
     assert results["retrieval_recall_at_k"] >= 0.0
+    assert results["recall_hits"] >= 1
 
 def test_run_evaluation_benchmark_returns_report(tmp_path):
     storage_dir = tmp_path / "storage"
