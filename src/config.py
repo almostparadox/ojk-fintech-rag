@@ -1,19 +1,76 @@
-# src/config.py
-from pathlib import Path
-from typing import Any, Dict, Optional
-from pydantic import BaseModel, Field
 import os
+from pathlib import Path
+from typing import Any
+
 from dotenv import load_dotenv
+from pydantic import BaseModel, Field, model_validator
 
 load_dotenv()
 
+
 class Settings(BaseModel):
-    NINEROUTER_API_KEY: str = Field(default_factory=lambda: os.getenv("NINEROUTER_API_KEY", ""))
-    NINEROUTER_BASE_URL: str = Field(default_factory=lambda: os.getenv("NINEROUTER_BASE_URL", "https://api.9router.com/v1"))
-    DEFAULT_MODEL: str = Field(default_factory=lambda: os.getenv("DEFAULT_MODEL", "deepseek-chat"))
-    EMBEDDING_MODEL: str = Field(default_factory=lambda: os.getenv("EMBEDDING_MODEL", "sentence-transformers/all-MiniLM-L6-v2"))
+    LLM_API_KEY: str = Field(default="")
+    LLM_BASE_URL: str = Field(default="https://api.openai.com/v1")
+    DEFAULT_MODEL: str = Field(default="gpt-4o-mini")
+    EMBEDDING_MODEL: str = Field(default="sentence-transformers/all-MiniLM-L6-v2")
     STORAGE_DIR: Path = Field(default_factory=lambda: Path(os.getenv("STORAGE_DIR", "./storage")).resolve())
     DATA_DIR: Path = Field(default_factory=lambda: Path(__file__).parent.parent / "data")
+
+    # Backward compatibility aliases
+    NINEROUTER_API_KEY: str | None = None
+    NINEROUTER_BASE_URL: str | None = None
+    OPENAI_API_KEY: str | None = None
+    OPENAI_BASE_URL: str | None = None
+
+    @model_validator(mode="before")
+    @classmethod
+    def resolve_credentials(cls, data: Any) -> Any:
+        if not isinstance(data, dict):
+            data = {}
+
+        api_key = (
+            data.get("LLM_API_KEY")
+            or data.get("OPENAI_API_KEY")
+            or data.get("NINEROUTER_API_KEY")
+            or os.getenv("LLM_API_KEY")
+            or os.getenv("OPENAI_API_KEY")
+            or os.getenv("NINEROUTER_API_KEY")
+            or ""
+        )
+
+        base_url = (
+            data.get("LLM_BASE_URL")
+            or data.get("OPENAI_BASE_URL")
+            or data.get("NINEROUTER_BASE_URL")
+            or os.getenv("LLM_BASE_URL")
+            or os.getenv("OPENAI_BASE_URL")
+            or os.getenv("NINEROUTER_BASE_URL")
+            or (
+                "https://api.9router.com/v1"
+                if (data.get("NINEROUTER_API_KEY") or os.getenv("NINEROUTER_API_KEY"))
+                else "https://api.openai.com/v1"
+            )
+        )
+
+        default_model = (
+            data.get("DEFAULT_MODEL")
+            or os.getenv("DEFAULT_MODEL")
+            or (
+                "deepseek-chat"
+                if (data.get("NINEROUTER_API_KEY") or os.getenv("NINEROUTER_API_KEY"))
+                else "gpt-4o-mini"
+            )
+        )
+
+        data["LLM_API_KEY"] = api_key
+        data["LLM_BASE_URL"] = base_url
+        data["DEFAULT_MODEL"] = default_model
+        data["NINEROUTER_API_KEY"] = api_key
+        data["NINEROUTER_BASE_URL"] = base_url
+        data["OPENAI_API_KEY"] = api_key
+        data["OPENAI_BASE_URL"] = base_url
+        return data
+
 
 class LegalChunk(BaseModel):
     id: str
@@ -24,10 +81,11 @@ class LegalChunk(BaseModel):
     pasal: str
     legal_ref: str
     content: str
-    metadata: Dict[str, Any] = Field(default_factory=dict)
+    metadata: dict[str, Any] = Field(default_factory=dict)
 
     def to_search_text(self) -> str:
         status_tag = f"[{self.status.upper()}]"
         return f"[{self.reg_id}] {status_tag} {self.bab} - {self.pasal}\n{self.content}"
+
 
 settings = Settings()

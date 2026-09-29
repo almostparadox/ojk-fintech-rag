@@ -99,7 +99,7 @@ pip install -r requirements.txt
 
 ### 2. Configure Environment
 
-Copy the `.env.example` file and provide your 9router API key:
+Copy the `.env.example` file and configure your LLM provider (OpenAI, DeepSeek, 9router, OpenRouter, Groq, or local Ollama):
 
 ```bash
 cp .env.example .env
@@ -107,9 +107,21 @@ cp .env.example .env
 
 Edit `.env`:
 ```ini
-NINEROUTER_API_KEY=your_actual_9router_key_here
-NINEROUTER_BASE_URL=https://api.9router.com/v1
-DEFAULT_MODEL=deepseek-chat
+# Any OpenAI-compatible provider:
+LLM_API_KEY=your_api_key_here
+LLM_BASE_URL=https://api.openai.com/v1
+DEFAULT_MODEL=gpt-4o-mini
+
+# Or for 9router:
+# LLM_API_KEY=your_9router_key_here
+# LLM_BASE_URL=https://api.9router.com/v1
+# DEFAULT_MODEL=deepseek-chat
+
+# Or for local Ollama:
+# LLM_API_KEY=ollama
+# LLM_BASE_URL=http://localhost:11434/v1
+# DEFAULT_MODEL=qwen2.5:7b
+
 EMBEDDING_MODEL=sentence-transformers/all-MiniLM-L6-v2
 STORAGE_DIR=./storage
 ```
@@ -129,7 +141,7 @@ python cli.py bootstrap
 Output:
 ```text
 🚀 Memulai Bootstrap Data Regulasi OJK & UU PDP...
-📦 Mengindeks 12 pasal regulasi...
+📦 Mengindeks 13 pasal regulasi...
 ✓ Bootstrap selesai! Database LanceDB & BM25 siap digunakan.
 ```
 

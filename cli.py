@@ -1,35 +1,40 @@
-# cli.py
 import argparse
 import json
 import sys
 from pathlib import Path
+
 from rich.console import Console
-from rich.table import Table
 from rich.panel import Panel
+from rich.table import Table
 
 from src.config import LegalChunk, settings
-from src.ingestion.indexer import LegalIndexer
-from src.retrieval.hybrid_search import HybridSearcher
-from src.generation.client import LegalGenerator
-from src.ingestion.pdf_loader import load_document
-from src.ingestion.legal_parser import LegalParser
 from src.evaluation.benchmark import run_evaluation_benchmark
+from src.generation.client import LegalGenerator
+from src.ingestion.indexer import LegalIndexer
+from src.ingestion.legal_parser import LegalParser
+from src.ingestion.pdf_loader import load_document
+from src.retrieval.hybrid_search import HybridSearcher
 
 console = Console()
+
 
 def cmd_bootstrap(args):
     console.print("[bold green]🚀 Memulai Bootstrap Data Regulasi OJK & UU PDP...[/bold green]")
     sample_dir = settings.DATA_DIR / "sample"
     all_chunks = []
     for f in sample_dir.glob("*.json"):
-        with open(f, "r", encoding="utf-8") as fp:
-            data = json.load(fp)
-            all_chunks.extend([LegalChunk(**item) for item in data])
+        try:
+            with open(f, encoding="utf-8") as fp:
+                data = json.load(fp)
+                all_chunks.extend([LegalChunk(**item) for item in data])
+        except Exception as e:
+            console.print(f"[bold red]❌ Gagal membaca {f.name}:[/bold red] {e}")
 
     console.print(f"📦 Mengindeks [cyan]{len(all_chunks)}[/cyan] pasal regulasi...")
     indexer = LegalIndexer()
     indexer.index_chunks(all_chunks)
     console.print("[bold green]✓ Bootstrap selesai! Database LanceDB & BM25 siap digunakan.[/bold green]")
+
 
 def cmd_query(args):
     searcher = HybridSearcher()
@@ -54,12 +59,12 @@ def cmd_query(args):
             r.chunk.reg_id,
             r.chunk.pasal,
             f"[{status_color}]{r.chunk.status}[/{status_color}]",
-            f"{r.score:.4f}"
+            f"{r.score:.4f}",
         )
     console.print(table)
 
     if not args.no_llm:
-        console.print("\n[bold cyan]🤖 Analisis Regulasi (9router):[/bold cyan]")
+        console.print("\n[bold cyan]🤖 Analisis Regulasi (LLM):[/bold cyan]")
         generator = LegalGenerator()
         contexts = [r.chunk for r in results]
         try:
@@ -68,8 +73,11 @@ def cmd_query(args):
                 sys.stdout.flush()
             print()
         except Exception as e:
-            console.print(f"[red]Gagal memanggil 9router LLM: {e}[/red]")
-            console.print("[yellow]Tip: Pastikan NINEROUTER_API_KEY sudah diisi di .env[/yellow]")
+            console.print(f"[red]Gagal memanggil LLM: {e}[/red]")
+            console.print(
+                "[yellow]Tip: Pastikan LLM_API_KEY (atau OPENAI_API_KEY / NINEROUTER_API_KEY) sudah diisi di .env[/yellow]"
+            )
+
 
 def cmd_ingest(args):
     file_path = Path(args.file)
@@ -87,17 +95,19 @@ def cmd_ingest(args):
         text=text,
         reg_id=args.reg_id,
         reg_title=args.reg_title,
-        status=args.status
+        status=args.status,
     )
     console.print(f"Parsed [cyan]{len(chunks)}[/cyan] pasal from [bold]{file_path.name}[/bold]")
     indexer = LegalIndexer()
     indexer.index_chunks(chunks, append=True)
     console.print(f"[bold green]✓ Berhasil mengindeks {file_path.name}![/bold green]")
 
+
 def cmd_eval(args):
     console.print("[bold cyan]Menjalankan Benchmark Evaluasi Kepatuhan Hukum...[/bold cyan]")
     report = run_evaluation_benchmark()
     console.print(Panel(report, title="Hasil Benchmark Evaluasi"))
+
 
 def build_parser() -> argparse.ArgumentParser:
     parser = argparse.ArgumentParser(description="OJK & Fintech Indonesian Legal RAG CLI")
@@ -129,10 +139,12 @@ def build_parser() -> argparse.ArgumentParser:
 
     return parser
 
+
 def main():
     parser = build_parser()
     args = parser.parse_args()
     args.func(args)
+
 
 if __name__ == "__main__":
     main()
